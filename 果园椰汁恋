@@ -252,3 +252,260 @@
             transform: scale(0.97);
         }
     </style>
+
+</head>
+<body>
+<div class="container">
+    <!-- 头部 -->
+    <div class="header">
+        <h1>
+            🧃 字卡工坊
+            <span>自动回复机</span>
+        </h1>
+    </div>
+
+    <!-- 字卡库管理 -->
+    <div class="card-library">
+        <div class="library-title">
+            <span>📇 我的字卡库</span>
+            <span class="count" id="cardCount">0 张</span>
+        </div>
+        <div class="add-card">
+            <input type="text" id="newCardInput" placeholder="输入新字卡，比如「萧小四」" maxlength="30">
+            <button id="addCardBtn">＋ 添加</button>
+        </div>
+        <div class="card-list" id="cardList">
+            <!-- 动态生成字卡 -->
+        </div>
+        <div id="emptyLibraryMsg" class="empty-library-note" style="display: none;">✨ 字卡库空空，快添加几张吧</div>
+    </div>
+
+    <!-- 聊天记录展示区 -->
+    <div class="chat-area" id="chatArea">
+        <!-- 示例初始消息会通过JS生成 -->
+    </div>
+
+    <!-- 底部发送消息 -->
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="写点什么..." maxlength="100">
+        <button id="sendBtn">发送</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 数据存储 key ----------
+        const STORAGE_CARDS = 'wordcard_library';
+        const STORAGE_CHAT = 'wordcard_chat';
+
+        // ---------- 默认初始字卡 ----------
+        const DEFAULT_CARDS = ['萧小四', '沉沉正在输入', '小黄油脆苹果', '收到啦', '哈哈哈'];
+
+        // ---------- 当前状态 ----------
+        let cardLibrary = [];
+        let chatHistory = [];   // 存储 { role: 'user' 或 'bot', content: '...', time: 'HH:MM' }
+
+        // ---------- DOM 元素 ----------
+        const cardListEl = document.getElementById('cardList');
+        const cardCountEl = document.getElementById('cardCount');
+        const emptyMsgEl = document.getElementById('emptyLibraryMsg');
+        const chatAreaEl = document.getElementById('chatArea');
+        const newCardInput = document.getElementById('newCardInput');
+        const addCardBtn = document.getElementById('addCardBtn');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // ---------- 辅助函数：获取当前时间字符串 (HH:MM) ----------
+        function getCurrentTimeString() {
+            const d = new Date();
+            return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // ---------- 加载/初始化数据 ----------
+        function loadData() {
+            // 读取字卡库
+            const storedCards = localStorage.getItem(STORAGE_CARDS);
+            if (storedCards) {
+                try {
+                    cardLibrary = JSON.parse(storedCards);
+                    if (!Array.isArray(cardLibrary)) cardLibrary = [];
+                } catch { cardLibrary = []; }
+            } else {
+                cardLibrary = [...DEFAULT_CARDS];
+            }
+
+            // 读取聊天记录
+            const storedChat = localStorage.getItem(STORAGE_CHAT);
+            if (storedChat) {
+                try {
+                    chatHistory = JSON.parse(storedChat);
+                    if (!Array.isArray(chatHistory)) chatHistory = [];
+                } catch { chatHistory = []; }
+            } else {
+                // 默认两条打招呼消息
+                chatHistory = [
+                    { role: 'bot', content: '嗨！往字卡库里加点东西吧，我会随机回复哦', time: getCurrentTimeString() },
+                ];
+            }
+        }
+
+        // ---------- 保存数据到 localStorage ----------
+        function saveCards() {
+            localStorage.setItem(STORAGE_CARDS, JSON.stringify(cardLibrary));
+        }
+        function saveChat() {
+            localStorage.setItem(STORAGE_CHAT, JSON.stringify(chatHistory));
+        }
+
+        // ---------- 渲染字卡库 (横向标签) ----------
+        function renderCardLibrary() {
+            cardListEl.innerHTML = '';  // 清空
+            if (cardLibrary.length === 0) {
+                emptyMsgEl.style.display = 'block';
+                cardCountEl.innerText = '0 张';
+                return;
+            }
+            emptyMsgEl.style.display = 'none';
+            cardCountEl.innerText = cardLibrary.length + ' 张';
+
+            cardLibrary.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card-item';
+                cardDiv.innerHTML = `
+                    ${card}
+                    <span class="delete" data-index="${index}">✕</span>
+                `;
+                cardListEl.appendChild(cardDiv);
+            });
+
+            // 给每个删除按钮绑定事件 (事件委托也可以，但直接绑定更清晰)
+            document.querySelectorAll('.card-item .delete').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const idx = this.getAttribute('data-index');
+                    if (idx !== null) deleteCard(parseInt(idx));
+                });
+            });
+        }
+
+        // ---------- 删除字卡 ----------
+        function deleteCard(index) {
+            if (index >= 0 && index < cardLibrary.length) {
+                cardLibrary.splice(index, 1);
+                saveCards();
+                renderCardLibrary();
+            }
+        }
+
+        // ---------- 添加字卡 ----------
+        function addCard(text) {
+            const trimmed = text.trim();
+            if (trimmed === '') return false;
+            // 避免完全重复的可以加，但去掉极端重复控制（保持自由）
+            cardLibrary.push(trimmed);
+            saveCards();
+            renderCardLibrary();
+            return true;
+        }
+
+        // ---------- 机器人随机回复 ----------
+        function getRandomBotReply() {
+            if (cardLibrary.length === 0) {
+                return '🧩 字卡库空空如也~ 先添加几张吧';
+            }
+            const randomIndex = Math.floor(Math.random() * cardLibrary.length);
+            return cardLibrary[randomIndex];
+        }
+
+        // ---------- 添加一条聊天消息 (并自动保存、滚动) ----------
+        function addChatMessage(role, content) {
+            const time = getCurrentTimeString();
+            chatHistory.push({ role, content, time });
+            saveChat();
+            renderChatArea();
+        }
+
+        // ---------- 渲染所有聊天记录 ----------
+        function renderChatArea() {
+            chatAreaEl.innerHTML = '';
+            if (chatHistory.length === 0) {
+                // 几乎不会发生，但保留防御
+                return;
+            }
+
+            chatHistory.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.role}`;
+
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'bubble';
+                bubbleDiv.textContent = msg.content;
+
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'time';
+                timeDiv.textContent = msg.time;
+
+                messageDiv.appendChild(bubbleDiv);
+                messageDiv.appendChild(timeDiv);
+                chatAreaEl.appendChild(messageDiv);
+            });
+
+            // 自动滚动到底部
+            chatAreaEl.scrollTop = chatAreaEl.scrollHeight;
+        }
+
+        // ---------- 处理发送消息（用户主动发送） ----------
+        function handleSendMessage() {
+            const userMsg = messageInput.value.trim();
+            if (userMsg === '') return;
+
+            // 1. 添加用户消息
+            addChatMessage('user', userMsg);
+            messageInput.value = '';   // 清空
+
+            // 2. 延迟一点点让用户体验更自然 (模拟机器思考)
+            setTimeout(() => {
+                const botReply = getRandomBotReply();
+                addChatMessage('bot', botReply);
+            }, 200);
+        }
+
+        // ---------- 初始化事件绑定 ----------
+        function bindEvents() {
+            addCardBtn.addEventListener('click', () => {
+                const success = addCard(newCardInput.value);
+                if (success) newCardInput.value = '';
+            });
+
+            newCardInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const success = addCard(newCardInput.value);
+                    if (success) newCardInput.value = '';
+                }
+            });
+
+            sendBtn.addEventListener('click', handleSendMessage);
+
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+        }
+
+        // ---------- 启动一切 ----------
+        function init() {
+            loadData();
+            renderCardLibrary();
+            renderChatArea();
+            bindEvents();
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
+```
