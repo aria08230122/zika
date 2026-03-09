@@ -17,7 +17,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 0; /* 改为 0 消除空白 */
+            padding: 0;
             transition: background 0.3s;
         }
         /* 夜间模式变量 */
@@ -96,19 +96,19 @@
 
         .container {
             width: 100%;
-            max-width: 100%; /* 全屏宽度 */
+            max-width: 100%;
             background: #fffaf3;
-            border-radius: 0; /* 去掉圆角，可以按喜好保留 */
+            border-radius: 0;
             box-shadow: none;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* 全屏高度 */
+            height: 100vh;
             position: relative;
             transition: background 0.3s;
         }
 
-        /* 顶部工具栏 - 新样式 */
+        /* 顶部工具栏 */
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -707,35 +707,35 @@
             color: #5f4f40;
         }
         /* 管理模态框分组选项卡样式 */
-.group-tab {
-    background: #ece2d7;
-    border: none;
-    border-radius: 30px;
-    padding: 6px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
-    white-space: nowrap;
-}
-.group-tab.active {
-    background: #d6c5b2;
-    font-weight: 500;
-}
-.group-tab:hover {
-    background: #d6c5b2;
-}
-#addGroupBtn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 8px;
-}
+        .group-tab {
+            background: #ece2d7;
+            border: none;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .group-tab.active {
+            background: #d6c5b2;
+            font-weight: 500;
+        }
+        .group-tab:hover {
+            background: #d6c5b2;
+        }
+        #addGroupBtn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
     </style>
 </head>
 <body>
 <div class="container" id="app">
-    <!-- 顶部工具栏（新） -->
+    <!-- 顶部工具栏 -->
     <div class="toolbar">
         <!-- 左侧：机器人信息 -->
         <div class="bot-info">
@@ -847,30 +847,6 @@
                     <label>状态</label>
                     <input type="text" id="myStatus" placeholder="在线/离线/思考中" value="在线">
                 </div>
-                <!-- 字卡库管理模态框 -->
-<div class="modal" id="cardManagerModal">
-    <div class="modal-content" style="max-width: 500px; height: 80vh; display: flex; flex-direction: column;">
-        <h2 style="display: flex; justify-content: space-between; align-items: center;">
-            <span>📇 字卡库管理</span>
-            <button id="closeCardManagerBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
-        </h2>
-        
-        <!-- 分组选项卡容器 -->
-        <div id="groupTabsContainer" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; overflow-x: auto;">
-            <!-- 动态生成选项卡 -->
-        </div>
-
-        <!-- 字卡列表区域 -->
-        <div id="cardManagerList" style="flex:1; overflow-y: auto; margin-bottom: 16px;"></div>
-
-        <!-- 新增字卡区域 -->
-        <div style="display: flex; gap: 8px; border-top: 1px solid #eee; padding-top: 16px;">
-            <input type="text" id="managerNewCardInput" placeholder="新字卡内容" style="flex:1; padding:10px; border-radius:30px; border:1px solid #ddd;">
-            <select id="managerCardGroupSelect" style="border-radius:30px; padding:0 12px;"></select>
-            <button id="managerAddCardBtn" style="background:#d6c5b2; border:none; border-radius:30px; padding:0 20px;">添加</button>
-        </div>
-    </div>
-</div>
             </div>
 
             <!-- 机器人资料 -->
@@ -984,6 +960,31 @@
             <div class="modal-buttons">
                 <button class="save" id="saveSettings">保存设置</button>
                 <button class="cancel" id="cancelSettings">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 字卡库管理模态框（独立于设置模态框） -->
+    <div class="modal" id="cardManagerModal">
+        <div class="modal-content" style="max-width: 500px; height: 80vh; display: flex; flex-direction: column;">
+            <h2 style="display: flex; justify-content: space-between; align-items: center;">
+                <span>📇 字卡库管理</span>
+                <button id="closeCardManagerBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </h2>
+            
+            <!-- 分组选项卡容器 -->
+            <div id="groupTabsContainer" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; overflow-x: auto;">
+                <!-- 动态生成选项卡 -->
+            </div>
+
+            <!-- 字卡列表区域 -->
+            <div id="cardManagerList" style="flex:1; overflow-y: auto; margin-bottom: 16px;"></div>
+
+            <!-- 新增字卡区域 -->
+            <div style="display: flex; gap: 8px; border-top: 1px solid #eee; padding-top: 16px;">
+                <input type="text" id="managerNewCardInput" placeholder="新字卡内容" style="flex:1; padding:10px; border-radius:30px; border:1px solid #ddd;">
+                <select id="managerCardGroupSelect" style="border-radius:30px; padding:0 12px;"></select>
+                <button id="managerAddCardBtn" style="background:#d6c5b2; border:none; border-radius:30px; padding:0 20px;">添加</button>
             </div>
         </div>
     </div>
@@ -1193,6 +1194,20 @@
                 else currentSessionIndex = 0;
             }
 
+            // 兼容旧数据：将字符串字卡转换为对象，并添加 favorite 字段
+            sessions.forEach(sess => {
+                if (sess.cards) {
+                    sess.cards = sess.cards.map(c => {
+                        if (typeof c === 'string') {
+                            return { text: c, group: '默认', favorite: false };
+                        } else {
+                            if (c.favorite === undefined) c.favorite = false;
+                            return c;
+                        }
+                    });
+                }
+            });
+
             if (settings.libraryCollapsed) {
                 cardLibraryEl.classList.add('collapsed');
             } else {
@@ -1237,223 +1252,7 @@
 
         function currentSession() { return sessions[currentSessionIndex]; }
 
-        // ---------- 字卡库管理模态框 ----------
-const cardManagerModal = document.getElementById('cardManagerModal');
-const openCardManagerBtn = document.getElementById('openCardManagerBtn');
-const closeCardManagerBtn = document.getElementById('closeCardManagerBtn');
-const groupTabsContainer = document.getElementById('groupTabsContainer');
-const cardManagerList = document.getElementById('cardManagerList');
-const managerNewCardInput = document.getElementById('managerNewCardInput');
-const managerCardGroupSelect = document.getElementById('managerCardGroupSelect');
-const managerAddCardBtn = document.getElementById('managerAddCardBtn');
-let currentManagerGroup = 'all'; // 当前选中的分组
-
-// 打开管理模态框
-openCardManagerBtn.addEventListener('click', () => {
-    updateManagerGroupSelect();    // 更新下拉框
-    renderGroupTabs();             // 渲染分组选项卡
-    renderCardManager();           // 渲染字卡列表
-    cardManagerModal.classList.add('show');
-});
-
-// 关闭管理模态框
-closeCardManagerBtn.addEventListener('click', () => {
-    cardManagerModal.classList.remove('show');
-});
-
-// 点击背景关闭
-cardManagerModal.addEventListener('click', (e) => {
-    if (e.target === cardManagerModal) {
-        cardManagerModal.classList.remove('show');
-    }
-});
-
-// 更新管理模态框中的分组下拉框
-function updateManagerGroupSelect() {
-    managerCardGroupSelect.innerHTML = '';
-    groups.forEach(g => {
-        const option = document.createElement('option');
-        option.value = g;
-        option.textContent = g;
-        managerCardGroupSelect.appendChild(option);
-    });
-}
-
-// 渲染分组选项卡（包括“全部”和所有分组，以及新增按钮）
-function renderGroupTabs() {
-    groupTabsContainer.innerHTML = '';
-    
-    // “全部”选项卡
-    const allTab = document.createElement('button');
-    allTab.className = `group-tab ${currentManagerGroup === 'all' ? 'active' : ''}`;
-    allTab.dataset.group = 'all';
-    allTab.textContent = '全部';
-    allTab.addEventListener('click', () => switchManagerGroup('all'));
-    groupTabsContainer.appendChild(allTab);
-    
-    // 每个分组选项卡
-    groups.forEach(group => {
-        const tab = document.createElement('button');
-        tab.className = `group-tab ${currentManagerGroup === group ? 'active' : ''}`;
-        tab.dataset.group = group;
-        tab.textContent = group;
-        tab.addEventListener('click', () => switchManagerGroup(group));
-        groupTabsContainer.appendChild(tab);
-    });
-    
-    // 新增分组按钮
-    const addBtn = document.createElement('button');
-    addBtn.id = 'addGroupBtn';
-    addBtn.textContent = '➕';
-    addBtn.addEventListener('click', addNewGroup);
-    groupTabsContainer.appendChild(addBtn);
-}
-
-// 切换分组
-function switchManagerGroup(group) {
-    currentManagerGroup = group;
-    renderGroupTabs();  // 更新选项卡激活状态
-    renderCardManager();
-}
-
-// 新增分组
-function addNewGroup() {
-    const newGroup = prompt('输入新分组名称');
-    if (newGroup && newGroup.trim() !== '' && !groups.includes(newGroup.trim())) {
-        groups.push(newGroup.trim());
-        saveGroups();
-        updateGroupSelect();           // 更新主界面分组下拉框
-        updateManagerGroupSelect();    // 更新管理模态框下拉框
-        renderGroupTabs();              // 重新渲染选项卡（会自动选中“全部”）
-        switchManagerGroup('all');      // 切换到全部视图
-    } else if (newGroup) {
-        alert('分组已存在或无效');
-    }
-}
-
-// 渲染管理模态框中的字卡列表
-function renderCardManager() {
-    const sess = currentSession();
-    let cardsToShow = sess.cards;
-    if (currentManagerGroup !== 'all') {
-        cardsToShow = sess.cards.filter(c => (c.group || '默认') === currentManagerGroup);
-    }
-
-    cardManagerList.innerHTML = '';
-    if (cardsToShow.length === 0) {
-        cardManagerList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">暂无字卡</div>';
-        return;
-    }
-
-    cardsToShow.forEach((card, index) => {
-        // 兼容旧数据：如果 card 是字符串，转为对象
-        const cardObj = (typeof card === 'string') ? { text: card, group: '默认', favorite: false } : card;
-        // 确保 favorite 字段存在
-        if (cardObj.favorite === undefined) cardObj.favorite = false;
-
-        const cardDiv = document.createElement('div');
-        cardDiv.style.display = 'flex';
-        cardDiv.style.alignItems = 'center';
-        cardDiv.style.justifyContent = 'space-between';
-        cardDiv.style.padding = '10px';
-        cardDiv.style.borderBottom = '1px solid #f0e8dd';
-        
-        // 左侧：字卡内容 + 分组标签
-        const leftDiv = document.createElement('div');
-        leftDiv.style.display = 'flex';
-        leftDiv.style.alignItems = 'center';
-        leftDiv.style.gap = '10px';
-        leftDiv.innerHTML = `
-            <span>${cardObj.text}</span>
-            <span style="background:#e3d9cf; border-radius:30px; padding:2px 8px; font-size:11px;">${cardObj.group || '默认'}</span>
-        `;
-        
-        // 右侧：心形 + 删除按钮
-        const rightDiv = document.createElement('div');
-        rightDiv.style.display = 'flex';
-        rightDiv.style.alignItems = 'center';
-        rightDiv.style.gap = '8px';
-        
-        // 心形按钮（收藏/取消收藏）
-        const heart = document.createElement('span');
-        heart.textContent = cardObj.favorite ? '❤️' : '♡';
-        heart.style.fontSize = '20px';
-        heart.style.cursor = 'pointer';
-        heart.addEventListener('click', () => {
-            cardObj.favorite = !cardObj.favorite;
-            // 更新原始数组中的对象
-            const originalCard = sess.cards.find(c => (c.text || c) === cardObj.text && (c.group || '默认') === cardObj.group);
-            if (originalCard) {
-                if (typeof originalCard === 'object') {
-                    originalCard.favorite = cardObj.favorite;
-                } else {
-                    // 如果原来是字符串，替换为对象
-                    const index = sess.cards.indexOf(originalCard);
-                    sess.cards[index] = { text: cardObj.text, group: cardObj.group, favorite: cardObj.favorite };
-                }
-            }
-            saveSessions();
-            heart.textContent = cardObj.favorite ? '❤️' : '♡';
-        });
-        
-        // 删除按钮
-        const delBtn = document.createElement('span');
-        delBtn.textContent = '🗑️';
-        delBtn.style.cursor = 'pointer';
-        delBtn.addEventListener('click', () => {
-            // 从当前会话删除该字卡
-            const cardIndex = sess.cards.findIndex(c => {
-                const cText = (typeof c === 'string') ? c : c.text;
-                const cGroup = (typeof c === 'string') ? '默认' : (c.group || '默认');
-                return cText === cardObj.text && cGroup === cardObj.group;
-            });
-            if (cardIndex !== -1) {
-                sess.cards.splice(cardIndex, 1);
-                saveSessions();
-                renderCardLibrary();      // 更新主界面字卡库
-                renderCardManager();       // 更新管理界面
-            }
-        });
-        
-        rightDiv.appendChild(heart);
-        rightDiv.appendChild(delBtn);
-        
-        cardDiv.appendChild(leftDiv);
-        cardDiv.appendChild(rightDiv);
-        cardManagerList.appendChild(cardDiv);
-    });
-}
-
-// 在管理模态框中添加字卡
-managerAddCardBtn.addEventListener('click', () => {
-    const text = managerNewCardInput.value.trim();
-    const group = managerCardGroupSelect.value;
-    if (text === '') return;
-    const sess = currentSession();
-    // 检查重复（忽略大小写）
-    const exists = sess.cards.some(c => {
-        const cText = (typeof c === 'string') ? c.toLowerCase() : c.text.toLowerCase();
-        const cGroup = (typeof c === 'string') ? '默认' : (c.group || '默认');
-        return cText === text.toLowerCase() && cGroup === group;
-    });
-    if (exists) {
-        alert(t('字卡已存在！'));
-        return;
-    }
-    sess.cards.push({ text, group, favorite: false });
-    saveSessions();
-    renderCardLibrary();
-    renderCardManager();
-    managerNewCardInput.value = '';
-});
-
-// 确保 groups 变量包含默认分组（如果还没有）
-if (!groups.includes('默认')) groups.unshift('默认');
-if (!groups.includes('Emoji')) groups.push('Emoji');
-if (!groups.includes('表情库')) groups.push('表情库');
-saveGroups();
-
-        // 更新分组下拉框
+        // 更新分组下拉框（主界面）
         function updateGroupSelect() {
             cardGroupSelect.innerHTML = '';
             groups.forEach(g => {
@@ -1463,6 +1262,222 @@ saveGroups();
                 cardGroupSelect.appendChild(option);
             });
         }
+
+        // ---------- 字卡库管理模态框 ----------
+        const cardManagerModal = document.getElementById('cardManagerModal');
+        const openCardManagerBtn = document.getElementById('openCardManagerBtn');
+        const closeCardManagerBtn = document.getElementById('closeCardManagerBtn');
+        const groupTabsContainer = document.getElementById('groupTabsContainer');
+        const cardManagerList = document.getElementById('cardManagerList');
+        const managerNewCardInput = document.getElementById('managerNewCardInput');
+        const managerCardGroupSelect = document.getElementById('managerCardGroupSelect');
+        const managerAddCardBtn = document.getElementById('managerAddCardBtn');
+        let currentManagerGroup = 'all'; // 当前选中的分组
+
+        // 打开管理模态框
+        openCardManagerBtn.addEventListener('click', () => {
+            updateManagerGroupSelect();    // 更新下拉框
+            renderGroupTabs();             // 渲染分组选项卡
+            renderCardManager();           // 渲染字卡列表
+            cardManagerModal.classList.add('show');
+        });
+
+        // 关闭管理模态框
+        closeCardManagerBtn.addEventListener('click', () => {
+            cardManagerModal.classList.remove('show');
+        });
+
+        // 点击背景关闭
+        cardManagerModal.addEventListener('click', (e) => {
+            if (e.target === cardManagerModal) {
+                cardManagerModal.classList.remove('show');
+            }
+        });
+
+        // 更新管理模态框中的分组下拉框
+        function updateManagerGroupSelect() {
+            managerCardGroupSelect.innerHTML = '';
+            groups.forEach(g => {
+                const option = document.createElement('option');
+                option.value = g;
+                option.textContent = g;
+                managerCardGroupSelect.appendChild(option);
+            });
+        }
+
+        // 渲染分组选项卡（包括“全部”和所有分组，以及新增按钮）
+        function renderGroupTabs() {
+            groupTabsContainer.innerHTML = '';
+            
+            // “全部”选项卡
+            const allTab = document.createElement('button');
+            allTab.className = `group-tab ${currentManagerGroup === 'all' ? 'active' : ''}`;
+            allTab.dataset.group = 'all';
+            allTab.textContent = '全部';
+            allTab.addEventListener('click', () => switchManagerGroup('all'));
+            groupTabsContainer.appendChild(allTab);
+            
+            // 每个分组选项卡
+            groups.forEach(group => {
+                const tab = document.createElement('button');
+                tab.className = `group-tab ${currentManagerGroup === group ? 'active' : ''}`;
+                tab.dataset.group = group;
+                tab.textContent = group;
+                tab.addEventListener('click', () => switchManagerGroup(group));
+                groupTabsContainer.appendChild(tab);
+            });
+            
+            // 新增分组按钮
+            const addBtn = document.createElement('button');
+            addBtn.id = 'addGroupBtn';
+            addBtn.textContent = '➕';
+            addBtn.addEventListener('click', addNewGroup);
+            groupTabsContainer.appendChild(addBtn);
+        }
+
+        // 切换分组
+        function switchManagerGroup(group) {
+            currentManagerGroup = group;
+            renderGroupTabs();  // 更新选项卡激活状态
+            renderCardManager();
+        }
+
+        // 新增分组
+        function addNewGroup() {
+            const newGroup = prompt('输入新分组名称');
+            if (newGroup && newGroup.trim() !== '' && !groups.includes(newGroup.trim())) {
+                groups.push(newGroup.trim());
+                saveGroups();
+                updateGroupSelect();           // 更新主界面分组下拉框
+                updateManagerGroupSelect();    // 更新管理模态框下拉框
+                renderGroupTabs();              // 重新渲染选项卡（会自动选中“全部”）
+                switchManagerGroup('all');      // 切换到全部视图
+            } else if (newGroup) {
+                alert('分组已存在或无效');
+            }
+        }
+
+        // 渲染管理模态框中的字卡列表
+        function renderCardManager() {
+            const sess = currentSession();
+            let cardsToShow = sess.cards;
+            if (currentManagerGroup !== 'all') {
+                cardsToShow = sess.cards.filter(c => (c.group || '默认') === currentManagerGroup);
+            }
+
+            cardManagerList.innerHTML = '';
+            if (cardsToShow.length === 0) {
+                cardManagerList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">暂无字卡</div>';
+                return;
+            }
+
+            cardsToShow.forEach((card, index) => {
+                // 兼容旧数据：如果 card 是字符串，转为对象
+                const cardObj = (typeof card === 'string') ? { text: card, group: '默认', favorite: false } : card;
+                // 确保 favorite 字段存在
+                if (cardObj.favorite === undefined) cardObj.favorite = false;
+
+                const cardDiv = document.createElement('div');
+                cardDiv.style.display = 'flex';
+                cardDiv.style.alignItems = 'center';
+                cardDiv.style.justifyContent = 'space-between';
+                cardDiv.style.padding = '10px';
+                cardDiv.style.borderBottom = '1px solid #f0e8dd';
+                
+                // 左侧：字卡内容 + 分组标签
+                const leftDiv = document.createElement('div');
+                leftDiv.style.display = 'flex';
+                leftDiv.style.alignItems = 'center';
+                leftDiv.style.gap = '10px';
+                leftDiv.innerHTML = `
+                    <span>${cardObj.text}</span>
+                    <span style="background:#e3d9cf; border-radius:30px; padding:2px 8px; font-size:11px;">${cardObj.group || '默认'}</span>
+                `;
+                
+                // 右侧：心形 + 删除按钮
+                const rightDiv = document.createElement('div');
+                rightDiv.style.display = 'flex';
+                rightDiv.style.alignItems = 'center';
+                rightDiv.style.gap = '8px';
+                
+                // 心形按钮（收藏/取消收藏）
+                const heart = document.createElement('span');
+                heart.textContent = cardObj.favorite ? '❤️' : '♡';
+                heart.style.fontSize = '20px';
+                heart.style.cursor = 'pointer';
+                heart.addEventListener('click', () => {
+                    cardObj.favorite = !cardObj.favorite;
+                    // 更新原始数组中的对象
+                    const originalCard = sess.cards.find(c => (c.text || c) === cardObj.text && (c.group || '默认') === cardObj.group);
+                    if (originalCard) {
+                        if (typeof originalCard === 'object') {
+                            originalCard.favorite = cardObj.favorite;
+                        } else {
+                            // 如果原来是字符串，替换为对象
+                            const index = sess.cards.indexOf(originalCard);
+                            sess.cards[index] = { text: cardObj.text, group: cardObj.group, favorite: cardObj.favorite };
+                        }
+                    }
+                    saveSessions();
+                    heart.textContent = cardObj.favorite ? '❤️' : '♡';
+                });
+                
+                // 删除按钮
+                const delBtn = document.createElement('span');
+                delBtn.textContent = '🗑️';
+                delBtn.style.cursor = 'pointer';
+                delBtn.addEventListener('click', () => {
+                    // 从当前会话删除该字卡
+                    const cardIndex = sess.cards.findIndex(c => {
+                        const cText = (typeof c === 'string') ? c : c.text;
+                        const cGroup = (typeof c === 'string') ? '默认' : (c.group || '默认');
+                        return cText === cardObj.text && cGroup === cardObj.group;
+                    });
+                    if (cardIndex !== -1) {
+                        sess.cards.splice(cardIndex, 1);
+                        saveSessions();
+                        renderCardLibrary();      // 更新主界面字卡库
+                        renderCardManager();       // 更新管理界面
+                    }
+                });
+                
+                rightDiv.appendChild(heart);
+                rightDiv.appendChild(delBtn);
+                
+                cardDiv.appendChild(leftDiv);
+                cardDiv.appendChild(rightDiv);
+                cardManagerList.appendChild(cardDiv);
+            });
+        }
+
+        // 在管理模态框中添加字卡
+        managerAddCardBtn.addEventListener('click', () => {
+            const text = managerNewCardInput.value.trim();
+            const group = managerCardGroupSelect.value;
+            if (text === '') return;
+            const sess = currentSession();
+            // 检查重复（忽略大小写）
+            const exists = sess.cards.some(c => {
+                const cText = (typeof c === 'string') ? c.toLowerCase() : c.text.toLowerCase();
+                const cGroup = (typeof c === 'string') ? '默认' : (c.group || '默认');
+                return cText === text.toLowerCase() && cGroup === group;
+            });
+            if (exists) {
+                alert(t('字卡已存在！'));
+                return;
+            }
+            sess.cards.push({ text, group, favorite: false });
+            saveSessions();
+            renderCardLibrary();
+            renderCardManager();
+            managerNewCardInput.value = '';
+        });
+
+        // 确保 groups 变量包含默认分组（如果还没有）
+        if (!groups.includes('默认')) groups.unshift('默认');
+        if (!groups.includes('Emoji')) groups.push('Emoji');
+        if (!groups.includes('表情库')) groups.push('表情库');
+        saveGroups();
 
         // 渲染会话标签
         function renderSessions() {
@@ -1573,7 +1588,7 @@ saveGroups();
                 alert(t('字卡已存在！'));
                 return false;
             }
-            sess.cards.push({ text: trimmed, group: group });
+            sess.cards.push({ text: trimmed, group: group, favorite: false });
             saveSessions();
             renderCardLibrary();
             return true;
