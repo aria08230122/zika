@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>字卡机器人 · 全功能版</title>
+    <title>沉沉念念</title>
     <style>
         * {
             margin: 0;
@@ -1184,6 +1184,7 @@
                 nightModeCheckbox.checked = true;
             } else {
                 document.body.classList.remove('night-mode');
+                updateTopBar();
             }
 
             // 分组模式
@@ -1610,7 +1611,39 @@
             saveSettings();
             settingsModal.classList.remove('show');
             renderChatArea();
+            updateTopBar();
         }
+
+        // 更新顶部栏头像和文字
+function updateTopBar() {
+    // 机器人信息
+    const botAvatar = document.getElementById('botAvatarDisplay');
+    const botName = document.getElementById('botNameDisplay');
+    const botStatus = document.getElementById('botStatusDisplay');
+    if (settings.bot.avatar && settings.bot.avatar.startsWith('data:')) {
+        botAvatar.style.backgroundImage = `url('${settings.bot.avatar}')`;
+        botAvatar.textContent = '';
+    } else {
+        botAvatar.style.backgroundImage = '';
+        botAvatar.textContent = settings.bot.avatar || '🤖';
+    }
+    botName.textContent = settings.bot.name;
+    botStatus.textContent = settings.bot.status;
+
+    // 我的信息
+    const userAvatar = document.getElementById('userAvatarDisplay');
+    const userName = document.getElementById('userNameDisplay');
+    const userStatus = document.getElementById('userStatusDisplay');
+    if (settings.my.avatar && settings.my.avatar.startsWith('data:')) {
+        userAvatar.style.backgroundImage = `url('${settings.my.avatar}')`;
+        userAvatar.textContent = '';
+    } else {
+        userAvatar.style.backgroundImage = '';
+        userAvatar.textContent = settings.my.avatar || '😊';
+    }
+    userName.textContent = settings.my.name;
+    userStatus.textContent = settings.my.status;
+}
 
                 // 文件上传处理
         function handleImageUpload(file, callback) {
