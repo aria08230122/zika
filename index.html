@@ -75,7 +75,7 @@
             justify-content: flex-end;
         }
 
-         .avatar {
+        .avatar {
             width: 36px;
             height: 36px;
             background-color: #d1d1d1;
@@ -174,7 +174,7 @@
             color: #5a5a5a;
         }
 
-         .messages-container {
+        .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
@@ -752,7 +752,7 @@
             <div class="wordcard-add" style="display: flex; gap:6px; margin-bottom:16px;">
                 <input type="text" id="new-wordcard-input" placeholder="新字卡内容" maxlength="30" style="flex:1; padding:8px; border-radius:40px; border:1px solid #d2e6ec;">
                 <button id="add-wordcard-btn" style="background:#d1d1d1; border:none; border-radius:40px; padding:0 14px;">新增</button>
-            </div>
+                </div>
             <div class="wordcard-list" id="wordcard-list" style="overflow-y:auto; max-height:300px;"></div>
             <div class="panel-footer">
                 <div style="display: flex; gap: 8px;">
@@ -764,7 +764,7 @@
         </div>
     </div>
 
-     <!-- 联系人面板 -->
+    <!-- 联系人面板 -->
     <div class="overlay" id="contact-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -1004,7 +1004,7 @@
     <div id="message-actions-menu" class="message-actions-menu" style="display: none;"></div>
 </div>
 
-<script>
+    <script>
     (function() {
         function escapeHtml(unsafe) {
             if (!unsafe) return '';
@@ -1022,7 +1022,7 @@
             return name ? name.charAt(0).toUpperCase() : '?';
         }
 
-        // 主题扩展（包含气泡颜色）
+     // 主题扩展（包含气泡颜色）
         const themes = [
             { primary: '#f1f5f6', secondary: '#d2e6ec', accent: '#d1d1d1', myBubble: '#f1d6d6', otherBubble: '#dbe5f1', myText: '#5a5a5a', otherText: '#4a453e' },
             { primary: '#e8e2d1', secondary: '#d9cdb3', accent: '#c0b09a', myBubble: '#e8d7c4', otherBubble: '#d4c5b2', myText: '#5a4a3a', otherText: '#4a3e32' },
@@ -1035,7 +1035,7 @@
             { primary: '#dad2cb', secondary: '#c6bbb0', accent: '#ac9e90', myBubble: '#dad0c4', otherBubble: '#c6bbb0', myText: '#52473c', otherText: '#42392f' }
         ];
 
-        const CONTACTS_KEY = 'orchard_contacts';
+     const CONTACTS_KEY = 'orchard_contacts';
         const WORDCARDS_KEY = 'orchard_wordcards';
         const STATUS_KEY = 'orchard_statuses';
         const SELECTED_KEY = 'orchard_selected';
@@ -1059,14 +1059,14 @@
             bubbleFontSize: 0.85
         };
 
-        let contacts = [];
+     let contacts = [];
         let selectedContactId = null;
         let wordCards = [];
         let statuses = [];
         let settings = { ...defaultSettings };
         let quotedMessage = null;
 
-        function loadData() {
+     function loadData() {
             const storedContacts = localStorage.getItem(CONTACTS_KEY);
             if (storedContacts) {
                 try { contacts = JSON.parse(storedContacts); } catch { contacts = null; }
@@ -1097,12 +1097,12 @@
                 });
             }
 
-            const storedSelected = localStorage.getItem(SELECTED_KEY);
+        const storedSelected = localStorage.getItem(SELECTED_KEY);
             if (storedSelected && contacts.some(c => c.id === storedSelected)) {
                 selectedContactId = storedSelected;
             } else {
                 selectedContactId = contacts[0]?.id || null;
-    }
+            }
 
             const storedWords = localStorage.getItem(WORDCARDS_KEY);
             if (storedWords) {
@@ -1118,7 +1118,7 @@
                 statuses = ['在线', '忙碌', '生病', '想喝椰汁', '睡觉中', '发呆', '开心', '离线'];
             }
 
-            const storedSettings = localStorage.getItem(SETTINGS_KEY);
+        const storedSettings = localStorage.getItem(SETTINGS_KEY);
             if (storedSettings) {
                 try { settings = { ...defaultSettings, ...JSON.parse(storedSettings) }; } catch { settings = { ...defaultSettings }; }
             } else {
@@ -1137,15 +1137,15 @@
             } else {
                 document.querySelector('input[name="receipt"][value="doublecheck"]').checked = true;
             }
-        }
+     }
 
-        function saveContacts() { localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts)); }
+     function saveContacts() { localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts)); }
         function saveSelected() { localStorage.setItem(SELECTED_KEY, selectedContactId); }
         function saveWordCards() { localStorage.setItem(WORDCARDS_KEY, JSON.stringify(wordCards)); }
         function saveStatuses() { localStorage.setItem(STATUS_KEY, JSON.stringify(statuses)); }
         function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
 
-        function applyTheme(index, custom) {
+     function applyTheme(index, custom) {
             let colors;
             if (index === -1) { // 自定义
                 colors = custom;
@@ -1162,9 +1162,9 @@
             settings.customColors.otherBubble = colors.otherBubble;
             settings.customColors.myText = colors.myText;
             settings.customColors.otherText = colors.otherText;
-        }
+     }
 
-        function applyBgSettings() {
+     function applyBgSettings() {
             const container = document.getElementById('messages-container');
             if (settings.bgImage) {
                 container.style.backgroundImage = `url('${settings.bgImage}')`;
@@ -1174,18 +1174,18 @@
             container.style.backgroundColor = settings.bgImage ? 'transparent' : '#f1f5f6';
             container.style.opacity = settings.bgOpacity;
             container.style.backdropFilter = `blur(${settings.bgBlur}px)`;
-        }
+     }
 
-        function applyFontSettings() {
+     function applyFontSettings() {
             document.querySelectorAll('.name').forEach(el => {
                 el.style.fontSize = settings.nameFontSize + 'rem';
             });
             document.querySelectorAll('.message-bubble').forEach(el => {
                 el.style.fontSize = settings.bubbleFontSize + 'rem';
             });
-        }
+     }
 
-        function renderContactList() {
+     function renderContactList() {
             const container = document.getElementById('contact-list');
             if (!container) return;
             if (contacts.length === 0) {
@@ -1234,9 +1234,9 @@
                     }
                 });
             });
-        }
+     }
 
-        function renderWordCards() {
+     function renderWordCards() {
             const container = document.getElementById('wordcard-list');
             if (!container) return;
             if (wordCards.length === 0) {
@@ -1270,9 +1270,9 @@
                     if (confirm('删除？')) { wordCards.splice(index,1); saveWordCards(); renderWordCards(); }
                 });
             });
-        }
+     }
 
-        function renderStatusList() {
+     function renderStatusList() {
             const container = document.getElementById('status-list');
             if (!container) return;
             if (statuses.length === 0) {
@@ -1311,9 +1311,9 @@
                     if (confirm('删除？')) { statuses.splice(index,1); saveStatuses(); renderStatusList(); }
                 });
             });
-        }
+     }
 
-        function renderThemeGrid() {
+     function renderThemeGrid() {
             const grid = document.getElementById('theme-grid');
             let html = '';
             themes.forEach((theme, idx) => {
@@ -1335,9 +1335,9 @@
                     document.getElementById('other-text-color').value = themes[idx].otherText;
                 });
             });
-        }
+     }
 
-        function refreshChatDisplay() {
+     function refreshChatDisplay() {
             const contact = contacts.find(c => c.id === selectedContactId);
             if (!contact) return;
 
@@ -1356,7 +1356,7 @@
                 document.getElementById('self-avatar').innerHTML = getInitials(contact.selfName);
             }
 
-            const messages = contact.messages || [];
+        const messages = contact.messages || [];
             const container = document.getElementById('messages-container');
             if (messages.length === 0) {
                 container.innerHTML = '<div class="empty-chat-placeholder">🥥 发送第一条消息</div>';
@@ -1400,7 +1400,7 @@
             }
             scrollToBottom();
 
-            // 为每个消息气泡绑定长按事件，显示操作菜单（引用/删除）
+        // 为每个消息气泡绑定长按事件，显示操作菜单（引用/删除）
             document.querySelectorAll('.message-bubble').forEach(bubble => {
                 bubble.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
@@ -1419,7 +1419,7 @@
             return `rgba(${r}, ${g}, ${b}, ${opacity})`;
         }
 
-        function showMessageActions(x, y, msgIdx, message) {
+     function showMessageActions(x, y, msgIdx, message) {
             const menu = document.getElementById('message-actions-menu');
             menu.style.display = 'flex';
             menu.style.left = x + 'px';
@@ -1444,7 +1444,7 @@
                 }
                 menu.style.display = 'none';
             };
-            // 点击其他地方关闭菜单
+         // 点击其他地方关闭菜单
             setTimeout(() => {
                 window.addEventListener('click', function closeMenu() {
                     menu.style.display = 'none';
@@ -1467,7 +1467,7 @@
             if (indicator) indicator.classList.remove('show');
         }
 
-        function sendMessage() {
+     function sendMessage() {
             const contact = contacts.find(c => c.id === selectedContactId);
             if (!contact) return;
             const input = document.getElementById('message-input');
@@ -1540,9 +1540,9 @@
                     if (selectedContactId === targetContact.id) refreshChatDisplay();
                 }
             }, waitTime);
-        }
+     }
 
-        function importWordCardsFromFile(file) {
+     function importWordCardsFromFile(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
@@ -1573,7 +1573,7 @@
             URL.revokeObjectURL(url);
         }
 
-        function openOverlay(id) { document.getElementById(id).classList.add('show'); }
+     function openOverlay(id) { document.getElementById(id).classList.add('show'); }
         function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
 
         function init() {
@@ -1634,7 +1634,7 @@
             document.getElementById('settings-main-close').addEventListener('click', () => closeOverlay('settings-main-overlay'));
             document.getElementById('settings-main-close2').addEventListener('click', () => closeOverlay('settings-main-overlay'));
 
-            // 外观设置导航
+        // 外观设置导航
             document.getElementById('open-appearance').addEventListener('click', () => {
                 closeOverlay('settings-main-overlay');
                 openOverlay('appearance-overlay');
@@ -1646,7 +1646,7 @@
                 openOverlay('settings-main-overlay');
             });
 
-            // 主题配色
+        // 主题配色
             document.getElementById('open-theme').addEventListener('click', () => {
                 closeOverlay('appearance-overlay');
                 renderThemeGrid();
@@ -1659,7 +1659,7 @@
                 openOverlay('appearance-overlay');
             });
 
-            // 气泡颜色
+        // 气泡颜色
             document.getElementById('open-bubble-color').addEventListener('click', () => {
                 closeOverlay('appearance-overlay');
                 // 初始化颜色选择器
@@ -1708,7 +1708,7 @@
                 saveSettings();
             });
 
-            // 字体调节
+        // 字体调节
             document.getElementById('open-font-adjust').addEventListener('click', () => {
                 closeOverlay('appearance-overlay');
                 document.getElementById('name-font-size').value = settings.nameFontSize;
@@ -1736,7 +1736,7 @@
                 saveSettings();
             });
 
-            // 背景
+        // 背景
             document.getElementById('open-background').addEventListener('click', () => {
                 closeOverlay('appearance-overlay');
                 document.getElementById('bg-opacity').value = settings.bgOpacity;
@@ -1783,7 +1783,7 @@
                 saveSettings();
             });
 
-            // 聊天设置
+        // 聊天设置
             document.getElementById('open-chat-settings').addEventListener('click', () => {
                 closeOverlay('settings-main-overlay');
                 openOverlay('chat-settings-main-overlay');
@@ -1795,7 +1795,7 @@
                 openOverlay('settings-main-overlay');
             });
 
-            // 消息交互
+        // 消息交互
             document.getElementById('open-msg-interact').addEventListener('click', () => {
                 closeOverlay('chat-settings-main-overlay');
                 openOverlay('msg-interact-overlay');
@@ -1819,7 +1819,7 @@
                 openOverlay('chat-settings-main-overlay');
             });
 
-            // 滑块和开关
+        // 滑块和开关
             document.getElementById('min-wait').addEventListener('input', (e) => {
                 settings.minWait = parseFloat(e.target.value);
                 document.getElementById('min-wait-val').textContent = settings.minWait + 's';
@@ -1847,7 +1847,7 @@
                 });
             });
 
-            function createNewContact() {
+        function createNewContact() {
                 const name = prompt('输入对方昵称', '新朋友');
                 if (!name) return;
                 const newId = 'c' + Date.now() + '-' + Math.random().toString(36).substring(2,6);
@@ -1868,17 +1868,19 @@
                 renderContactList();
                 refreshChatDisplay();
                 closeOverlay('contact-overlay');
-            }
+        }
 
-            function addWordCard() {
+        function addWordCard() {
                 const text = document.getElementById('new-wordcard-input').value.trim();
                 if (text) {
                     wordCards.push(text);
                     saveWordCards();
                     renderWordCards();
                     document.getElementById('new-wordcard-input').value = '';
+                }
+            }
 
-                    function addStatus() {
+            function addStatus() {
                 const text = document.getElementById('new-status-input').value.trim();
                 if (text) {
                     statuses.push(text);
@@ -1888,7 +1890,7 @@
                 }
             }
 
-            function uploadAvatar(isPeer) {
+        function uploadAvatar(isPeer) {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'image/*';
@@ -1909,9 +1911,9 @@
                     }
                 };
                 input.click();
-            }
+        }
 
-            function editName(isPeer) {
+        function editName(isPeer) {
                 const contact = contacts.find(c => c.id === selectedContactId);
                 if (!contact) return;
                 const current = isPeer ? contact.peerName : contact.selfName;
@@ -1936,6 +1938,3 @@
 </script>
 </body>
 </html>
-                }
-            }
-              
