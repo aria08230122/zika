@@ -75,7 +75,7 @@
             justify-content: flex-end;
         }
 
-        .avatar {
+         .avatar {
             width: 36px;
             height: 36px;
             background-color: #d1d1d1;
@@ -174,7 +174,7 @@
             color: #5a5a5a;
         }
 
-        .messages-container {
+         .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
@@ -183,7 +183,7 @@
             gap: 12px;
             background: #f1f5f6;
             scroll-behavior: smooth;
-            transition: background-image 0.2s;
+            transition: background-image 0.2s, background-color 0.2s;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -223,10 +223,42 @@
             word-wrap: break-word;
             backdrop-filter: blur(2px);
             font-size: 0.85rem;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, color 0.2s, backdrop-filter 0.2s;
+            cursor: pointer;
         }
         .message-row.contact .message-bubble {
             background-color: rgba(219, 229, 241, 0.8);
+        }
+
+        /* 消息操作菜单 (长按出现) */
+        .message-actions-menu {
+            position: absolute;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 6px 12px;
+            display: flex;
+            gap: 16px;
+            z-index: 3000;
+            border: 1px solid #d2e6ec;
+        }
+        .message-actions-menu button {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: #5a5a5a;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .message-actions-menu button:hover {
+            background: #e1b2b2;
+            color: white;
         }
 
         .typing-indicator {
@@ -282,13 +314,14 @@
         }
 
         .receipt {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             color: #8a8a8a;
             margin-left: 4px;
             display: inline-block;
+            transition: color 0.2s;
         }
-        .double-check {
-            font-size: 0.7rem;
+        .receipt.read {
+            color: #5a9eff; /* 对方已读蓝色 */
         }
 
         .message-text {
@@ -472,9 +505,10 @@
 
         .icon-row {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             justify-content: center;
             margin: 20px 0;
+            flex-wrap: wrap;
         }
         .icon-text-btn {
             display: flex;
@@ -532,7 +566,7 @@
             gap: 10px;
         }
         .color-row label {
-            width: 60px;
+            width: 70px;
             color: #5a5a5a;
         }
         .color-row input[type="color"] {
@@ -623,6 +657,7 @@
             padding: 4px 8px;
             border-radius: 20px;
             background: rgba(255,255,255,0.5);
+            transition: background 0.2s;
         }
         .receipt-option.selected {
             background: #e1b2b2;
@@ -707,6 +742,7 @@
         </div>
     </div>
 
+    <!-- 字卡库面板 -->
     <div class="overlay" id="wordcard-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -728,6 +764,7 @@
         </div>
     </div>
 
+     <!-- 联系人面板 -->
     <div class="overlay" id="contact-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -742,6 +779,7 @@
         </div>
     </div>
 
+    <!-- 状态面板 -->
     <div class="overlay" id="status-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -760,6 +798,7 @@
         </div>
     </div>
 
+    <!-- 设置主面板 -->
     <div class="overlay" id="settings-main-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -776,6 +815,7 @@
         </div>
     </div>
 
+    <!-- ========== 外观设置子面板 ========== -->
     <div class="overlay" id="appearance-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -784,6 +824,8 @@
             </div>
             <div class="icon-row">
                 <button class="icon-text-btn" id="open-theme"><i class="fa-regular fa-swatchbook"></i>主题配色</button>
+                <button class="icon-text-btn" id="open-bubble-color"><i class="fa-regular fa-message"></i>气泡颜色</button>
+                <button class="icon-text-btn" id="open-font-adjust"><i class="fa-regular fa-text-height"></i>字体调节</button>
                 <button class="icon-text-btn" id="open-background"><i class="fa-regular fa-image"></i>背景</button>
             </div>
             <div class="panel-footer" style="justify-content: space-between;">
@@ -793,6 +835,7 @@
         </div>
     </div>
 
+    <!-- 主题配色子面板 (扩展了气泡颜色) -->
     <div class="overlay" id="theme-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -801,12 +844,6 @@
             </div>
             <div style="font-weight:500; margin:10px 0;">快捷换肤</div>
             <div class="theme-grid" id="theme-grid"></div>
-            <div style="font-weight:500; margin:20px 0 10px;">自定义编辑器</div>
-            <div class="color-editor">
-                <div class="color-row"><label>主色</label><input type="color" id="color-primary" value="#f1f5f6"></div>
-                <div class="color-row"><label>辅色</label><input type="color" id="color-secondary" value="#d2e6ec"></div>
-                <div class="color-row"><label>强调色</label><input type="color" id="color-accent" value="#d1d1d1"></div>
-            </div>
             <div class="panel-footer" style="justify-content: space-between;">
                 <button id="theme-back">← 返回</button>
                 <button id="theme-close2">关闭</button>
@@ -814,17 +851,79 @@
         </div>
     </div>
 
+    <!-- 气泡颜色子面板 -->
+    <div class="overlay" id="bubble-color-overlay">
+        <div class="panel">
+            <div class="panel-header">
+                <span><i class="fa-regular fa-message"></i> 气泡颜色</span>
+                <button id="bubble-color-close"><i class="fa-regular fa-circle-xmark"></i></button>
+            </div>
+            <div class="color-editor">
+                <div class="color-row"><label>我的气泡</label><input type="color" id="my-bubble-color" value="#f1d6d6"></div>
+                <div class="color-row"><label>对方气泡</label><input type="color" id="other-bubble-color" value="#dbe5f1"></div>
+                <div class="color-row"><label>我的文字</label><input type="color" id="my-text-color" value="#5a5a5a"></div>
+                <div class="color-row"><label>对方文字</label><input type="color" id="other-text-color" value="#4a453e"></div>
+                <div class="slider-row">
+                    <label>透明度</label>
+                    <input type="range" id="bubble-opacity" min="0.5" max="1" step="0.1" value="0.8">
+                    <span id="bubble-opacity-val">0.8</span>
+                </div>
+            </div>
+            <div class="panel-footer" style="justify-content: space-between;">
+                <button id="bubble-color-back">← 返回</button>
+                <button id="bubble-color-close2">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 字体调节子面板 -->
+    <div class="overlay" id="font-adjust-overlay">
+        <div class="panel">
+            <div class="panel-header">
+                <span><i class="fa-regular fa-text-height"></i> 字体调节</span>
+                <button id="font-adjust-close"><i class="fa-regular fa-circle-xmark"></i></button>
+            </div>
+            <div style="margin:16px 0;">
+                <div class="slider-row">
+                    <label>昵称字体</label>
+                    <input type="range" id="name-font-size" min="0.6" max="1.2" step="0.1" value="0.8">
+                    <span id="name-font-size-val">0.8rem</span>
+                </div>
+                <div class="slider-row">
+                    <label>气泡字体</label>
+                    <input type="range" id="bubble-font-size" min="0.7" max="1.2" step="0.1" value="0.85">
+                    <span id="bubble-font-size-val">0.85rem</span>
+                </div>
+            </div>
+            <div class="panel-footer" style="justify-content: space-between;">
+                <button id="font-adjust-back">← 返回</button>
+                <button id="font-adjust-close2">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景子面板 (增强透明度/模糊) -->
     <div class="overlay" id="background-overlay">
         <div class="panel">
             <div class="panel-header">
-                <span><i class="fa-regular fa-image"></i> 聊天背景</span>
+                <span><i class="fa-regular fa-image"></i> 背景</span>
                 <button id="background-close"><i class="fa-regular fa-circle-xmark"></i></button>
             </div>
             <div style="margin:16px 0;">
                 <label for="bg-upload" style="display:block; background:#d2e6ec; border-radius:40px; padding:10px; text-align:center; cursor:pointer;">点击上传图片</label>
                 <input type="file" id="bg-upload" accept="image/*" style="display:none;">
             </div>
-            <button id="reset-bg" style="background:#d1d1d1; border:none; border-radius:40px; padding:10px; width:100%;">恢复默认背景</button>
+            <div class="slider-row">
+                <label>透明度</label>
+                <input type="range" id="bg-opacity" min="0" max="1" step="0.1" value="1">
+                <span id="bg-opacity-val">1</span>
+            </div>
+            <div class="slider-row">
+                <label>模糊度</label>
+                <input type="range" id="bg-blur" min="0" max="10" step="1" value="0">
+                <span id="bg-blur-val">0px</span>
+            </div>
+            <button id="reset-bg" style="background:#d1d1d1; border:none; border-radius:40px; padding:10px; width:100%; margin-top:10px;">恢复默认背景</button>
             <div class="panel-footer" style="justify-content: space-between; margin-top:16px;">
                 <button id="background-back">← 返回</button>
                 <button id="background-close2">关闭</button>
@@ -832,6 +931,7 @@
         </div>
     </div>
 
+    <!-- 聊天设置主面板 -->
     <div class="overlay" id="chat-settings-main-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -849,6 +949,7 @@
         </div>
     </div>
 
+    <!-- 消息交互子面板 (已读回执样式已改进) -->
     <div class="overlay" id="msg-interact-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -863,7 +964,7 @@
                 <div style="margin:20px 0 8px;">已读回执</div>
                 <div class="receipt-options">
                     <label class="receipt-option"><input type="radio" name="receipt" value="text" checked> <span>已读</span></label>
-                    <label class="receipt-option"><input type="radio" name="receipt" value="doublecheck"> <span>√√</span></label>
+                    <label class="receipt-option"><input type="radio" name="receipt" value="doublecheck"> <span>✓✓</span></label>
                 </div>
             </div>
             <div class="panel-footer" style="justify-content: space-between;">
@@ -873,6 +974,7 @@
         </div>
     </div>
 
+    <!-- 节奏子面板 -->
     <div class="overlay" id="rhythm-overlay">
         <div class="panel">
             <div class="panel-header">
@@ -898,7 +1000,8 @@
         </div>
     </div>
 
-    <div id="quote-menu" class="quote-menu" style="display: none;"></div>
+    <!-- 消息操作菜单 (动态) -->
+    <div id="message-actions-menu" class="message-actions-menu" style="display: none;"></div>
 </div>
 
 <script>
@@ -919,16 +1022,17 @@
             return name ? name.charAt(0).toUpperCase() : '?';
         }
 
+        // 主题扩展（包含气泡颜色）
         const themes = [
-            { primary: '#f1f5f6', secondary: '#d2e6ec', accent: '#d1d1d1' },
-            { primary: '#e8e2d1', secondary: '#d9cdb3', accent: '#c0b09a' },
-            { primary: '#dbe4d8', secondary: '#c0cfc1', accent: '#a7b9aa' },
-            { primary: '#f0e1d2', secondary: '#e2cbb4', accent: '#c9ae92' },
-            { primary: '#d9d0c7', secondary: '#c5b8ab', accent: '#ab9c8c' },
-            { primary: '#e2d9d0', secondary: '#cfc1b3', accent: '#b5a493' },
-            { primary: '#d4d9d4', secondary: '#b9c2b8', accent: '#9aa69c' },
-            { primary: '#f0e2dc', secondary: '#e3cdc2', accent: '#ccb2a4' },
-            { primary: '#dad2cb', secondary: '#c6bbb0', accent: '#ac9e90' }
+            { primary: '#f1f5f6', secondary: '#d2e6ec', accent: '#d1d1d1', myBubble: '#f1d6d6', otherBubble: '#dbe5f1', myText: '#5a5a5a', otherText: '#4a453e' },
+            { primary: '#e8e2d1', secondary: '#d9cdb3', accent: '#c0b09a', myBubble: '#e8d7c4', otherBubble: '#d4c5b2', myText: '#5a4a3a', otherText: '#4a3e32' },
+            { primary: '#dbe4d8', secondary: '#c0cfc1', accent: '#a7b9aa', myBubble: '#cfe0d2', otherBubble: '#b9cfbf', myText: '#3e5542', otherText: '#2f4033' },
+            { primary: '#f0e1d2', secondary: '#e2cbb4', accent: '#c9ae92', myBubble: '#f3d9c2', otherBubble: '#e3c9b2', myText: '#5a4c3e', otherText: '#4a3f34' },
+            { primary: '#d9d0c7', secondary: '#c5b8ab', accent: '#ab9c8c', myBubble: '#d9cbbc', otherBubble: '#c5b7a8', myText: '#51463b', otherText: '#41382f' },
+            { primary: '#e2d9d0', secondary: '#cfc1b3', accent: '#b5a493', myBubble: '#e2d3c4', otherBubble: '#cfc0b1', myText: '#54483c', otherText: '#443a30' },
+            { primary: '#d4d9d4', secondary: '#b9c2b8', accent: '#9aa69c', myBubble: '#d4dbd1', otherBubble: '#b9c4b8', myText: '#3e5342', otherText: '#2f4032' },
+            { primary: '#f0e2dc', secondary: '#e3cdc2', accent: '#ccb2a4', myBubble: '#f3ded3', otherBubble: '#e3cdc0', myText: '#5a4a40', otherText: '#4a3d34' },
+            { primary: '#dad2cb', secondary: '#c6bbb0', accent: '#ac9e90', myBubble: '#dad0c4', otherBubble: '#c6bbb0', myText: '#52473c', otherText: '#42392f' }
         ];
 
         const CONTACTS_KEY = 'orchard_contacts';
@@ -939,12 +1043,20 @@
 
         const defaultSettings = {
             themeIndex: 0,
-            customColors: { primary: '#f1f5f6', secondary: '#d2e6ec', accent: '#d1d1d1' },
+            customColors: { 
+                primary: '#f1f5f6', secondary: '#d2e6ec', accent: '#d1d1d1',
+                myBubble: '#f1d6d6', otherBubble: '#dbe5f1', myText: '#5a5a5a', otherText: '#4a453e',
+                bubbleOpacity: 0.8
+            },
             bgImage: null,
+            bgOpacity: 1,
+            bgBlur: 0,
             quoteEnabled: true,
             receiptStyle: 'text',
             minWait: 1,
-            maxWait: 120
+            maxWait: 120,
+            nameFontSize: 0.8,
+            bubbleFontSize: 0.85
         };
 
         let contacts = [];
@@ -990,7 +1102,7 @@
                 selectedContactId = storedSelected;
             } else {
                 selectedContactId = contacts[0]?.id || null;
-            }
+    }
 
             const storedWords = localStorage.getItem(WORDCARDS_KEY);
             if (storedWords) {
@@ -1013,11 +1125,8 @@
                 settings = { ...defaultSettings };
             }
             applyTheme(settings.themeIndex, settings.customColors);
-            if (settings.bgImage) {
-                document.getElementById('messages-container').style.backgroundImage = `url('${settings.bgImage}')`;
-            } else {
-                document.getElementById('messages-container').style.backgroundImage = '';
-            }
+            applyBgSettings();
+            applyFontSettings();
             document.getElementById('min-wait').value = settings.minWait;
             document.getElementById('min-wait-val').textContent = settings.minWait + 's';
             document.getElementById('max-wait').value = settings.maxWait;
@@ -1038,7 +1147,7 @@
 
         function applyTheme(index, custom) {
             let colors;
-            if (index === -1) {
+            if (index === -1) { // 自定义
                 colors = custom;
             } else {
                 colors = themes[index];
@@ -1048,6 +1157,32 @@
             document.documentElement.style.setProperty('--accent-color', colors.accent);
             document.querySelector('.chat-header').style.backgroundColor = colors.secondary;
             document.querySelector('.chat-footer').style.backgroundColor = colors.secondary;
+            // 保存气泡颜色以便后续使用
+            settings.customColors.myBubble = colors.myBubble;
+            settings.customColors.otherBubble = colors.otherBubble;
+            settings.customColors.myText = colors.myText;
+            settings.customColors.otherText = colors.otherText;
+        }
+
+        function applyBgSettings() {
+            const container = document.getElementById('messages-container');
+            if (settings.bgImage) {
+                container.style.backgroundImage = `url('${settings.bgImage}')`;
+            } else {
+                container.style.backgroundImage = '';
+            }
+            container.style.backgroundColor = settings.bgImage ? 'transparent' : '#f1f5f6';
+            container.style.opacity = settings.bgOpacity;
+            container.style.backdropFilter = `blur(${settings.bgBlur}px)`;
+        }
+
+        function applyFontSettings() {
+            document.querySelectorAll('.name').forEach(el => {
+                el.style.fontSize = settings.nameFontSize + 'rem';
+            });
+            document.querySelectorAll('.message-bubble').forEach(el => {
+                el.style.fontSize = settings.bubbleFontSize + 'rem';
+            });
         }
 
         function renderContactList() {
@@ -1094,7 +1229,7 @@
                         renderContactList();
                         if (selectedContactId) refreshChatDisplay();
                         else {
-                            document.getElementById('messages-container').innerHTML = '<div class="empty-chat-placeholder">🌱 请添加联系人</div>';
+                            document.getElementById('messages-container').innerHTML = '<div class="empty-chat-placeholder">请添加联系人</div>';
                         }
                     }
                 });
@@ -1192,9 +1327,12 @@
                     settings.customColors = { ...themes[idx] };
                     applyTheme(idx, themes[idx]);
                     saveSettings();
-                    document.getElementById('color-primary').value = themes[idx].primary;
-                    document.getElementById('color-secondary').value = themes[idx].secondary;
-                    document.getElementById('color-accent').value = themes[idx].accent;
+                    refreshChatDisplay(); // 更新气泡颜色
+                    // 更新颜色选择器的值
+                    document.getElementById('my-bubble-color').value = themes[idx].myBubble;
+                    document.getElementById('other-bubble-color').value = themes[idx].otherBubble;
+                    document.getElementById('my-text-color').value = themes[idx].myText;
+                    document.getElementById('other-text-color').value = themes[idx].otherText;
                 });
             });
         }
@@ -1235,12 +1373,18 @@
                         if (settings.receiptStyle === 'text') {
                             receiptHtml = '<span class="receipt">已读</span>';
                         } else {
-                            receiptHtml = '<span class="receipt">√√</span>';
+                            // 对方已读时变蓝色
+                            const readClass = msg.receipt === 'read' ? 'read' : '';
+                            receiptHtml = `<span class="receipt ${readClass}">✓✓</span>`;
                         }
                     }
+                    // 应用气泡颜色
+                    const bubbleStyle = msg.sender === 'me' 
+                        ? `background-color: ${hexToRgba(settings.customColors.myBubble, settings.customColors.bubbleOpacity)}; color: ${settings.customColors.myText};`
+                        : `background-color: ${hexToRgba(settings.customColors.otherBubble, settings.customColors.bubbleOpacity)}; color: ${settings.customColors.otherText};`;
                     html += `
                         <div class="message-row ${senderClass}" data-message-idx="${idx}">
-                            <div class="message-bubble" data-message-idx="${idx}">
+                            <div class="message-bubble" data-message-idx="${idx}" style="${bubbleStyle}">
                                 ${quoteHtml}
                                 <div class="message-text">${escapeHtml(msg.text).replace(/\n/g,'<br>')}</div>
                                 <div class="message-time">
@@ -1256,32 +1400,57 @@
             }
             scrollToBottom();
 
-            if (settings.quoteEnabled) {
-                document.querySelectorAll('.message-bubble').forEach(bubble => {
-                    bubble.addEventListener('contextmenu', (e) => {
-                        e.preventDefault();
-                        const msgIdx = bubble.dataset.messageIdx;
-                        const message = contact.messages[msgIdx];
-                        if (!message) return;
-                        const menu = document.getElementById('quote-menu');
-                        menu.style.display = 'block';
-                        menu.style.left = e.pageX + 'px';
-                        menu.style.top = e.pageY + 'px';
-                        menu.innerHTML = `<button id="quote-this">引用此消息</button>`;
-                        document.getElementById('quote-this').onclick = () => {
-                            quotedMessage = { text: message.text, sender: message.sender };
-                            menu.style.display = 'none';
-                            document.getElementById('message-input').placeholder = '引用中...';
-                        };
-                        setTimeout(() => {
-                            window.addEventListener('click', function closeMenu() {
-                                menu.style.display = 'none';
-                                window.removeEventListener('click', closeMenu);
-                            }, { once: true });
-                        }, 10);
-                    });
+            // 为每个消息气泡绑定长按事件，显示操作菜单（引用/删除）
+            document.querySelectorAll('.message-bubble').forEach(bubble => {
+                bubble.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    const msgIdx = bubble.dataset.messageIdx;
+                    const message = contact.messages[msgIdx];
+                    if (!message) return;
+                    showMessageActions(e.pageX, e.pageY, msgIdx, message);
                 });
-            }
+            });
+        }
+
+        function hexToRgba(hex, opacity) {
+            const r = parseInt(hex.slice(1,3), 16);
+            const g = parseInt(hex.slice(3,5), 16);
+            const b = parseInt(hex.slice(5,7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+
+        function showMessageActions(x, y, msgIdx, message) {
+            const menu = document.getElementById('message-actions-menu');
+            menu.style.display = 'flex';
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
+            menu.innerHTML = `
+                <button id="action-quote" title="引用"><i class="fa-regular fa-reply"></i></button>
+                <button id="action-delete" title="删除"><i class="fa-regular fa-trash-can"></i></button>
+            `;
+            document.getElementById('action-quote').onclick = () => {
+                quotedMessage = { text: message.text, sender: message.sender };
+                document.getElementById('message-input').placeholder = '引用中...';
+                menu.style.display = 'none';
+            };
+            document.getElementById('action-delete').onclick = () => {
+                if (confirm('确定删除此消息？')) {
+                    const contact = contacts.find(c => c.id === selectedContactId);
+                    if (contact) {
+                        contact.messages.splice(msgIdx, 1);
+                        saveContacts();
+                        refreshChatDisplay();
+                    }
+                }
+                menu.style.display = 'none';
+            };
+            // 点击其他地方关闭菜单
+            setTimeout(() => {
+                window.addEventListener('click', function closeMenu() {
+                    menu.style.display = 'none';
+                    window.removeEventListener('click', closeMenu);
+                }, { once: true });
+            }, 10);
         }
 
         function scrollToBottom() {
@@ -1335,7 +1504,10 @@
                 if (!targetContact) return;
                 const count = Math.floor(Math.random() * 5) + 1;
                 let repliesSent = 0;
+                let accumulatedDelay = 0;
                 for (let i = 0; i < count; i++) {
+                    const randomDelay = Math.random() * (10000 - 1000) + 1000; // 1-10秒随机
+                    accumulatedDelay += randomDelay;
                     setTimeout(() => {
                         const still = contacts.find(c => c.id === selectedContactId);
                         if (!still) return;
@@ -1348,7 +1520,7 @@
                             receipt: null
                         };
                         still.messages.push(replyMsg);
-                        replyMsg.receipt = 'read';
+                        replyMsg.receipt = 'read'; // 对方消息默认已读
                         still.messages.forEach(msg => {
                             if (msg.sender === 'me' && !msg.receipt) msg.receipt = 'read';
                         });
@@ -1359,7 +1531,7 @@
                         if (repliesSent === count) {
                             hideTyping();
                         }
-                    }, i * 1000);  // ← 这里改为 1000 毫秒 (1秒)
+                    }, accumulatedDelay);
                 }
                 if (Math.random() < 0.3 && statuses.length > 0) {
                     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
@@ -1462,6 +1634,7 @@
             document.getElementById('settings-main-close').addEventListener('click', () => closeOverlay('settings-main-overlay'));
             document.getElementById('settings-main-close2').addEventListener('click', () => closeOverlay('settings-main-overlay'));
 
+            // 外观设置导航
             document.getElementById('open-appearance').addEventListener('click', () => {
                 closeOverlay('settings-main-overlay');
                 openOverlay('appearance-overlay');
@@ -1473,6 +1646,7 @@
                 openOverlay('settings-main-overlay');
             });
 
+            // 主题配色
             document.getElementById('open-theme').addEventListener('click', () => {
                 closeOverlay('appearance-overlay');
                 renderThemeGrid();
@@ -1484,27 +1658,91 @@
                 closeOverlay('theme-overlay');
                 openOverlay('appearance-overlay');
             });
-            document.getElementById('color-primary').addEventListener('input', (e) => {
-                settings.customColors.primary = e.target.value;
+
+            // 气泡颜色
+            document.getElementById('open-bubble-color').addEventListener('click', () => {
+                closeOverlay('appearance-overlay');
+                // 初始化颜色选择器
+                document.getElementById('my-bubble-color').value = settings.customColors.myBubble;
+                document.getElementById('other-bubble-color').value = settings.customColors.otherBubble;
+                document.getElementById('my-text-color').value = settings.customColors.myText;
+                document.getElementById('other-text-color').value = settings.customColors.otherText;
+                document.getElementById('bubble-opacity').value = settings.customColors.bubbleOpacity;
+                document.getElementById('bubble-opacity-val').textContent = settings.customColors.bubbleOpacity;
+                openOverlay('bubble-color-overlay');
+            });
+            document.getElementById('bubble-color-close').addEventListener('click', () => closeOverlay('bubble-color-overlay'));
+            document.getElementById('bubble-color-close2').addEventListener('click', () => closeOverlay('bubble-color-overlay'));
+            document.getElementById('bubble-color-back').addEventListener('click', () => {
+                closeOverlay('bubble-color-overlay');
+                openOverlay('appearance-overlay');
+            });
+            document.getElementById('my-bubble-color').addEventListener('input', (e) => {
+                settings.customColors.myBubble = e.target.value;
                 settings.themeIndex = -1;
-                applyTheme(-1, settings.customColors);
+                refreshChatDisplay();
                 saveSettings();
             });
-            document.getElementById('color-secondary').addEventListener('input', (e) => {
-                settings.customColors.secondary = e.target.value;
+            document.getElementById('other-bubble-color').addEventListener('input', (e) => {
+                settings.customColors.otherBubble = e.target.value;
                 settings.themeIndex = -1;
-                applyTheme(-1, settings.customColors);
+                refreshChatDisplay();
                 saveSettings();
             });
-            document.getElementById('color-accent').addEventListener('input', (e) => {
-                settings.customColors.accent = e.target.value;
+            document.getElementById('my-text-color').addEventListener('input', (e) => {
+                settings.customColors.myText = e.target.value;
                 settings.themeIndex = -1;
-                applyTheme(-1, settings.customColors);
+                refreshChatDisplay();
+                saveSettings();
+            });
+            document.getElementById('other-text-color').addEventListener('input', (e) => {
+                settings.customColors.otherText = e.target.value;
+                settings.themeIndex = -1;
+                refreshChatDisplay();
+                saveSettings();
+            });
+            document.getElementById('bubble-opacity').addEventListener('input', (e) => {
+                settings.customColors.bubbleOpacity = parseFloat(e.target.value);
+                document.getElementById('bubble-opacity-val').textContent = settings.customColors.bubbleOpacity;
+                refreshChatDisplay();
                 saveSettings();
             });
 
+            // 字体调节
+            document.getElementById('open-font-adjust').addEventListener('click', () => {
+                closeOverlay('appearance-overlay');
+                document.getElementById('name-font-size').value = settings.nameFontSize;
+                document.getElementById('name-font-size-val').textContent = settings.nameFontSize + 'rem';
+                document.getElementById('bubble-font-size').value = settings.bubbleFontSize;
+                document.getElementById('bubble-font-size-val').textContent = settings.bubbleFontSize + 'rem';
+                openOverlay('font-adjust-overlay');
+            });
+            document.getElementById('font-adjust-close').addEventListener('click', () => closeOverlay('font-adjust-overlay'));
+            document.getElementById('font-adjust-close2').addEventListener('click', () => closeOverlay('font-adjust-overlay'));
+            document.getElementById('font-adjust-back').addEventListener('click', () => {
+                closeOverlay('font-adjust-overlay');
+                openOverlay('appearance-overlay');
+            });
+            document.getElementById('name-font-size').addEventListener('input', (e) => {
+                settings.nameFontSize = parseFloat(e.target.value);
+                document.getElementById('name-font-size-val').textContent = settings.nameFontSize + 'rem';
+                applyFontSettings();
+                saveSettings();
+            });
+            document.getElementById('bubble-font-size').addEventListener('input', (e) => {
+                settings.bubbleFontSize = parseFloat(e.target.value);
+                document.getElementById('bubble-font-size-val').textContent = settings.bubbleFontSize + 'rem';
+                applyFontSettings();
+                saveSettings();
+            });
+
+            // 背景
             document.getElementById('open-background').addEventListener('click', () => {
                 closeOverlay('appearance-overlay');
+                document.getElementById('bg-opacity').value = settings.bgOpacity;
+                document.getElementById('bg-opacity-val').textContent = settings.bgOpacity;
+                document.getElementById('bg-blur').value = settings.bgBlur;
+                document.getElementById('bg-blur-val').textContent = settings.bgBlur + 'px';
                 openOverlay('background-overlay');
             });
             document.getElementById('background-close').addEventListener('click', () => closeOverlay('background-overlay'));
@@ -1519,18 +1757,33 @@
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         settings.bgImage = ev.target.result;
-                        document.getElementById('messages-container').style.backgroundImage = `url('${ev.target.result}')`;
+                        applyBgSettings();
                         saveSettings();
                     };
                     reader.readAsDataURL(file);
                 }
             });
+            document.getElementById('bg-opacity').addEventListener('input', (e) => {
+                settings.bgOpacity = parseFloat(e.target.value);
+                document.getElementById('bg-opacity-val').textContent = settings.bgOpacity;
+                applyBgSettings();
+                saveSettings();
+            });
+            document.getElementById('bg-blur').addEventListener('input', (e) => {
+                settings.bgBlur = parseInt(e.target.value);
+                document.getElementById('bg-blur-val').textContent = settings.bgBlur + 'px';
+                applyBgSettings();
+                saveSettings();
+            });
             document.getElementById('reset-bg').addEventListener('click', () => {
                 settings.bgImage = null;
-                document.getElementById('messages-container').style.backgroundImage = '';
+                settings.bgOpacity = 1;
+                settings.bgBlur = 0;
+                applyBgSettings();
                 saveSettings();
             });
 
+            // 聊天设置
             document.getElementById('open-chat-settings').addEventListener('click', () => {
                 closeOverlay('settings-main-overlay');
                 openOverlay('chat-settings-main-overlay');
@@ -1542,6 +1795,7 @@
                 openOverlay('settings-main-overlay');
             });
 
+            // 消息交互
             document.getElementById('open-msg-interact').addEventListener('click', () => {
                 closeOverlay('chat-settings-main-overlay');
                 openOverlay('msg-interact-overlay');
@@ -1553,6 +1807,7 @@
                 openOverlay('chat-settings-main-overlay');
             });
 
+            // 节奏
             document.getElementById('open-rhythm').addEventListener('click', () => {
                 closeOverlay('chat-settings-main-overlay');
                 openOverlay('rhythm-overlay');
@@ -1564,6 +1819,7 @@
                 openOverlay('chat-settings-main-overlay');
             });
 
+            // 滑块和开关
             document.getElementById('min-wait').addEventListener('input', (e) => {
                 settings.minWait = parseFloat(e.target.value);
                 document.getElementById('min-wait-val').textContent = settings.minWait + 's';
@@ -1582,6 +1838,9 @@
                 radio.addEventListener('change', (e) => {
                     if (e.target.checked) {
                         settings.receiptStyle = e.target.value;
+                        // 更新选项样式
+                        document.querySelectorAll('.receipt-option').forEach(opt => opt.classList.remove('selected'));
+                        e.target.parentElement.classList.add('selected');
                         saveSettings();
                         refreshChatDisplay();
                     }
@@ -1618,10 +1877,8 @@
                     saveWordCards();
                     renderWordCards();
                     document.getElementById('new-wordcard-input').value = '';
-                }
-            }
 
-            function addStatus() {
+                    function addStatus() {
                 const text = document.getElementById('new-status-input').value.trim();
                 if (text) {
                     statuses.push(text);
@@ -1679,3 +1936,6 @@
 </script>
 </body>
 </html>
+                }
+            }
+              
