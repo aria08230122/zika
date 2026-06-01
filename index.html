@@ -1524,7 +1524,10 @@ function normalizeContact(c){
         createdAt: c.createdAt || now,
         lastActive: c.lastActive || c.createdAt || now,
         pinned: !!c.pinned,
-        messages: Array.isArray(c.messages) ? c.messages.map(normalizeMessage) : []
+        messages: Array.isArray(c.messages) ? c.messages.map(normalizeMessage) : [],
+        wordCards: Array.isArray(c.wordCards) ? c.wordCards : null,
+        groups: Array.isArray(c.groups) ? c.groups : null,
+        stickers: Array.isArray(c.stickers) ? c.stickers : null
     };
 }
 function getQuoteDisplayText(q){
@@ -1566,14 +1569,40 @@ function ensureGroupByName(name, preferredId){
     return id;
 }
 
+function syncToContact(){
+    const contact = getCurrentContact();
+    if(!contact) return;
+    contact.wordCards = wordCards;
+    contact.groups = groups;
+    contact.stickers = stickers;
+}
+function syncFromContact(){
+    const contact = getCurrentContact();
+    if(!contact){
+        wordCards = [];
+        groups = [{id:"default", name:"默认"}];
+        stickers = defaultStickerPack();
+        return;
+    }
+    wordCards = Array.isArray(contact.wordCards) ? contact.wordCards : [];
+    groups = Array.isArray(contact.groups) ? contact.groups : [{id:"default", name:"默认"}];
+    if(!groups.some(g=>g.id === "default")) groups.unshift({id:"default", name:"默认"});
+    stickers = Array.isArray(contact.stickers) ? contact.stickers : defaultStickerPack();
+    stickers = stickers.map(normalizeSticker).filter(Boolean);
+    if(!stickers.length) stickers = defaultStickerPack();
+    wordCards.forEach(c=>{
+        if(!c.groupId || !groups.some(g=>g.id === c.groupId)) c.groupId = "default";
+    });
+    currentGroupFilter = "all";
+    wordcardSearchKeyword = "";
+    resetWordcardSelection();
+}
 function saveAll(){
+    syncToContact();
     localStorage.setItem("orchard_contacts", JSON.stringify(contacts));
     localStorage.setItem("orchard_selected", selectedContactId || "");
-    localStorage.setItem("orchard_wordcards_v2", JSON.stringify(wordCards));
-    localStorage.setItem("orchard_groups", JSON.stringify(groups));
     localStorage.setItem("orchard_statuses", JSON.stringify(statuses));
     localStorage.setItem("orchard_settings", JSON.stringify(settings));
-    localStorage.setItem("orchard_stickers_v1", JSON.stringify(stickers));
 }
 function getCurrentColors(){
     if(settings.themeIndex !== -1 && themes[settings.themeIndex]) return themes[settings.themeIndex];
@@ -2703,7 +2732,9 @@ function renderContactList(){
         item.addEventListener("click", e=>{
             if(e.target.closest(".pin-contact") || e.target.closest(".delete-contact")) return;
             if(id !== selectedContactId){
+                syncToContact();
                 selectedContactId = id;
+                syncFromContact();
                 saveAll();
                 refreshChat();
                 closeOverlay("contact-overlay");
@@ -2723,6 +2754,7 @@ function renderContactList(){
                 contacts = contacts.filter(c=>c.id !== id);
                 if(selectedContactId === id){
                     selectedContactId = getSortedContacts()[0]?.id || null;
+                    syncFromContact();
                 }
                 saveAll();
                 renderContactList();
@@ -2736,6 +2768,7 @@ function createNewContact(){
     if(name === null) return;
     const trimmed = name.trim();
     if(!trimmed) return;
+    syncToContact();
     const now = new Date().toISOString();
     const newId = uid("c");
     contacts.push({
@@ -2749,18 +2782,23 @@ function createNewContact(){
         createdAt:now,
         lastActive:now,
         pinned:false,
-        messages:[]
+        messages:[],
+        wordCards:[],
+        groups:[{id:"default", name:"默认"}],
+        stickers:defaultStickerPack()
     });
     selectedContactId = newId;
+    syncFromContact();
     saveAll();
     renderContactList();
     refreshChat();
     closeOverlay("contact-overlay");
 }
 function exportChats(){
+    syncToContact();
     const stamp = new Date().toISOString().replace(/[:.]/g,"-");
     downloadJson(`chat-records-${stamp}.json`, {
-        version:3,
+        version:4,
         exportAt:new Date().toISOString(),
         selectedContactId,
         contacts
@@ -2783,11 +2821,17 @@ function importChats(){
                 }
                 if(!confirm("导入会覆盖当前聊天记录，是否继续？")) return;
                 contacts = importedContacts.map(normalizeContact);
+                contacts.forEach(c=>{
+                    if(!c.wordCards) c.wordCards = [];
+                    if(!c.groups) c.groups = [{id:"default", name:"默认"}];
+                    if(!c.stickers) c.stickers = defaultStickerPack();
+                });
                 selectedContactId = data.selectedContactId && contacts.some(c=>c.id === data.selectedContactId)
                     ? data.selectedContactId
                     : (getSortedContacts()[0]?.id || contacts[0]?.id || null);
                 quotedMessage = null;
                 pendingReplies = 0;
+                syncFromContact();
                 saveAll();
                 renderContactList();
                 refreshChat();
@@ -3100,7 +3144,10 @@ function initData(){
             createdAt:now,
             lastActive:now,
             pinned:false,
-            messages:[]
+            messages:[],
+            wordCards:[],
+            groups:[{id:"default", name:"默认"}],
+            stickers:defaultStickerPack()
         }];
         selectedContactId = "c1";
     }else{
@@ -3110,32 +3157,47 @@ function initData(){
         }
     }
 
-    groups = readJSON("orchard_groups", []);
-    if(!Array.isArray(groups)) groups = [];
-    if(!groups.some(g=>g.id === "default")) groups.unshift({id:"default", name:"默认"});
+    // migrate old global data into contacts that don't have per-contact data yet
+    const legacyGroups = readJSON("orchard_groups", null);
+    const legacyWordCards = readJSON("orchard_wordcards_v2", null);
+    const legacyStickers = readJSON("orchard_stickers_v1", null);
+    const hasLegacy = legacyGroups || legacyWordCards || legacyStickers;
 
-    wordCards = readJSON("orchard_wordcards_v2", []);
-    if(!Array.isArray(wordCards)) wordCards = [];
-    wordCards = wordCards.map((item, i)=>{
-        if(typeof item === "string"){
-            return {id:uid("wc") + "_" + i, text:item, groupId:"default"};
-        }
-        return {
-            id: item.id || uid("wc") + "_" + i,
-            text: String(item.text || ""),
-            groupId: item.groupId || "default"
-        };
-    }).filter(item=>item.text);
-    if(!wordCards.length){
-        wordCards = [
-            {id:"wc1", text:"不来找我", groupId:"default"},
-            {id:"wc2", text:"没好好照顾自己", groupId:"default"},
-            {id:"wc3", text:"别喝冰的", groupId:"default"}
-        ];
+    if(hasLegacy){
+        let migGroups = Array.isArray(legacyGroups) ? legacyGroups : [{id:"default", name:"默认"}];
+        if(!migGroups.some(g=>g.id === "default")) migGroups.unshift({id:"default", name:"默认"});
+
+        let migCards = Array.isArray(legacyWordCards) ? legacyWordCards : [];
+        migCards = migCards.map((item, i)=>{
+            if(typeof item === "string") return {id:uid("wc")+"_"+i, text:item, groupId:"default"};
+            return {id:item.id||uid("wc")+"_"+i, text:String(item.text||""), groupId:item.groupId||"default"};
+        }).filter(item=>item.text);
+        migCards.forEach(c=>{
+            if(!c.groupId || !migGroups.some(g=>g.id === c.groupId)) c.groupId = "default";
+        });
+
+        let migStickers = Array.isArray(legacyStickers) ? legacyStickers.map(normalizeSticker).filter(Boolean) : [];
+        if(!migStickers.length) migStickers = defaultStickerPack();
+
+        contacts.forEach(contact=>{
+            if(!contact.wordCards) contact.wordCards = JSON.parse(JSON.stringify(migCards));
+            if(!contact.groups) contact.groups = JSON.parse(JSON.stringify(migGroups));
+            if(!contact.stickers) contact.stickers = JSON.parse(JSON.stringify(migStickers));
+        });
+
+        localStorage.removeItem("orchard_groups");
+        localStorage.removeItem("orchard_wordcards_v2");
+        localStorage.removeItem("orchard_stickers_v1");
     }
-    wordCards.forEach(c=>{
-        if(!c.groupId || !groups.some(g=>g.id === c.groupId)) c.groupId = "default";
+
+    // ensure all contacts have per-contact data
+    contacts.forEach(contact=>{
+        if(!contact.wordCards) contact.wordCards = [];
+        if(!contact.groups) contact.groups = [{id:"default", name:"默认"}];
+        if(!contact.stickers) contact.stickers = defaultStickerPack();
     });
+
+    syncFromContact();
 
     statuses = readJSON("orchard_statuses", []);
     if(!Array.isArray(statuses) || !statuses.length){
@@ -3152,13 +3214,6 @@ function initData(){
                 ...(storedSettings.customColors || {})
             }
         };
-    }
-
-    stickers = readJSON("orchard_stickers_v1", []);
-    if(!Array.isArray(stickers)) stickers = [];
-    stickers = stickers.map(normalizeSticker).filter(Boolean);
-    if(!stickers.length){
-        stickers = defaultStickerPack();
     }
 }
 
