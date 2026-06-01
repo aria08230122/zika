@@ -2003,11 +2003,6 @@ function renderNoContact(){
     }
 }
 
-function getCurrentColors(){
-    if(settings.themeIndex !== -1 && themes[settings.themeIndex]) return themes[settings.themeIndex];
-    return settings.customColors;
-}
-
 function refreshChat(){
     hideMsgMenu();
 
@@ -2042,13 +2037,21 @@ function refreshChat(){
     const peerAv = $("peer-avatar");
     const selfAv = $("self-avatar");
     if(contact.peerAvatar){
-        peerAv.innerHTML = `<img src="${contact.peerAvatar}" alt="peer">`;
+        peerAv.textContent = "";
+        const img = document.createElement("img");
+        img.src = contact.peerAvatar;
+        img.alt = "peer";
+        peerAv.appendChild(img);
     }else{
         peerAv.innerHTML = "";
         peerAv.textContent = getInitials(contact.peerName);
     }
     if(contact.selfAvatar){
-        selfAv.innerHTML = `<img src="${contact.selfAvatar}" alt="self">`;
+        selfAv.textContent = "";
+        const img = document.createElement("img");
+        img.src = contact.selfAvatar;
+        img.alt = "self";
+        selfAv.appendChild(img);
     }else{
         selfAv.innerHTML = "";
         selfAv.textContent = getInitials(contact.selfName);
@@ -2068,7 +2071,7 @@ function refreshChat(){
                 : `<span class="receipt ${msg.receipt === "read" ? "read" : ""}"><i class="fa-solid fa-check-double"></i></span>`)
             : "";
         const contentHtml = msg.type === "sticker"
-            ? `<img class="message-sticker" src="${msg.stickerSrc}" alt="${escapeHtml(msg.stickerName || "表情包")}">`
+            ? `<img class="message-sticker" src="${escapeHtml(msg.stickerSrc || "")}" alt="${escapeHtml(msg.stickerName || "表情包")}">`
             : `<div class="message-text">${escapeHtml(msg.text || "")}</div>`;
         const metaText = `${msg.time || ""}${msg.edited ? " · 已编辑" : ""}`;
 
@@ -2274,53 +2277,6 @@ function sendStickerMessage(sticker){
     closeOverlay("sticker-overlay");
     scheduleRobotReply(contactId, newMsg);
 }
-function scheduleRobotReply(contactId, myMsg){
-    const min = Math.min(settings.minWait, settings.maxWait);
-    const max = Math.max(settings.minWait, settings.maxWait);
-    const wait = Math.random() * (max * 1000 - min * 1000) + min * 1000;
-
-    setTimeout(()=>{
-        const liveContact = contacts.find(c=>c.id === contactId);
-        pendingReplies = Math.max(0, pendingReplies - 1);
-
-        if(!liveContact){
-            refreshChat();
-            return;
-        }
-
-        myMsg.receipt = "read";
-
-        const shouldSendSticker = settings.robotStickerEnabled && stickers.length > 0 && Math.random() < .35;
-        const replyMsg = shouldSendSticker
-            ? {
-                sender:"contact",
-                type:"sticker",
-                text:"",
-                stickerSrc:getRandomSticker().src,
-                stickerName:getRandomSticker().name || "表情包",
-                time:getCurrentTime(),
-                quote:null,
-                receipt:null,
-                edited:false
-            }
-            : {
-                sender:"contact",
-                type:"text",
-                text:getRandomWordCardText(),
-                stickerSrc:null,
-                stickerName:"表情包",
-                time:getCurrentTime(),
-                quote:null,
-                receipt:null,
-                edited:false
-            };
-
-        pushMessage(liveContact, replyMsg);
-        saveAll();
-        refreshChat();
-    }, wait);
-}
-
 function getFilteredWordCards(){
     const keyword = wordcardSearchKeyword.trim().toLowerCase();
     let filtered = currentGroupFilter === "all"
@@ -2936,9 +2892,9 @@ function renderStickerGrid(){
         return;
     }
     grid.innerHTML = stickers.map(st=>`
-        <div class="sticker-item" data-id="${st.id}">
-            ${st.builtin ? "" : `<button class="sticker-delete" data-id="${st.id}" title="删除"><i class="fa-solid fa-xmark"></i></button>`}
-            <img class="sticker-thumb" src="${st.src}" alt="${escapeHtml(st.name)}">
+        <div class="sticker-item" data-id="${escapeHtml(st.id)}">
+            ${st.builtin ? "" : `<button class="sticker-delete" data-id="${escapeHtml(st.id)}" title="删除"><i class="fa-solid fa-xmark"></i></button>`}
+            <img class="sticker-thumb" src="${escapeHtml(st.src)}" alt="${escapeHtml(st.name)}">
             <div class="sticker-name">${escapeHtml(st.name)}</div>
         </div>
     `).join("");
@@ -3040,7 +2996,7 @@ function renderTarotSpread(cards, mode){
                         </div>
                     </div>
                     <div class="tarot-face tarot-front">
-                        <img src="${card.src}" alt="${escapeHtml(card.name)}">
+                        <img src="${escapeHtml(card.src)}" alt="${escapeHtml(card.name)}">
                     </div>
                 </div>
             </div>
@@ -3213,6 +3169,9 @@ function bindEvents(){
         renderWordCards();
     });
     $("add-wordcard").addEventListener("click", addWordCard);
+    $("new-wordcard-input").addEventListener("keypress", e=>{
+        if(e.key === "Enter") addWordCard();
+    });
     $("upload-wordcard").addEventListener("click", importWordCards);
     $("export-wordcard").addEventListener("click", exportWordCards);
 
@@ -3599,12 +3558,6 @@ $("tarot-draw-btn").addEventListener("click", startTarotDraw);
 $("tarot-back").addEventListener("click", ()=>{
     closeOverlay("tarot-overlay");
     openOverlay("settings-main-overlay");
-});
-
-/* 表情包 */
-$("sticker-upload").addEventListener("change", e=>{
-    handleStickerUpload(e.target.files || []);
-    e.target.value = "";
 });
 
 /* 输入框聚焦时，手机端尽量滚到底 */
