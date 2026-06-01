@@ -1253,6 +1253,32 @@ Object.values(suits).forEach(suit=>{
 });
 const FULL_TAROT = [...major, ...minor];
 
+const TAROT_IMG_BASE = "https://raw.githubusercontent.com/metabismuth/tarot-json/master/cards/";
+const TAROT_IMAGES = {
+    "愚者":"m00.jpg","魔术师":"m01.jpg","女祭司":"m02.jpg","女皇":"m03.jpg",
+    "皇帝":"m04.jpg","教皇":"m05.jpg","恋人":"m06.jpg","战车":"m07.jpg",
+    "力量":"m08.jpg","隐士":"m09.jpg","命运之轮":"m10.jpg","正义":"m11.jpg",
+    "倒吊人":"m12.jpg","死神":"m13.jpg","节制":"m14.jpg","恶魔":"m15.jpg",
+    "高塔":"m16.jpg","星星":"m17.jpg","月亮":"m18.jpg","太阳":"m19.jpg",
+    "审判":"m20.jpg","世界":"m21.jpg",
+    "权杖·1":"w01.jpg","权杖·2":"w02.jpg","权杖·3":"w03.jpg","权杖·4":"w04.jpg",
+    "权杖·5":"w05.jpg","权杖·6":"w06.jpg","权杖·7":"w07.jpg","权杖·8":"w08.jpg",
+    "权杖·9":"w09.jpg","权杖·10":"w10.jpg",
+    "权杖·侍从":"w11.jpg","权杖·骑士":"w12.jpg","权杖·王后":"w13.jpg","权杖·国王":"w14.jpg",
+    "圣杯·1":"c01.jpg","圣杯·2":"c02.jpg","圣杯·3":"c03.jpg","圣杯·4":"c04.jpg",
+    "圣杯·5":"c05.jpg","圣杯·6":"c06.jpg","圣杯·7":"c07.jpg","圣杯·8":"c08.jpg",
+    "圣杯·9":"c09.jpg","圣杯·10":"c10.jpg",
+    "圣杯·侍从":"c11.jpg","圣杯·骑士":"c12.jpg","圣杯·王后":"c13.jpg","圣杯·国王":"c14.jpg",
+    "宝剑·1":"s01.jpg","宝剑·2":"s02.jpg","宝剑·3":"s03.jpg","宝剑·4":"s04.jpg",
+    "宝剑·5":"s05.jpg","宝剑·6":"s06.jpg","宝剑·7":"s07.jpg","宝剑·8":"s08.jpg",
+    "宝剑·9":"s09.jpg","宝剑·10":"s10.jpg",
+    "宝剑·侍从":"s11.jpg","宝剑·骑士":"s12.jpg","宝剑·王后":"s13.jpg","宝剑·国王":"s14.jpg",
+    "星币·1":"p01.jpg","星币·2":"p02.jpg","星币·3":"p03.jpg","星币·4":"p04.jpg",
+    "星币·5":"p05.jpg","星币·6":"p06.jpg","星币·7":"p07.jpg","星币·8":"p08.jpg",
+    "星币·9":"p09.jpg","星币·10":"p10.jpg",
+    "星币·侍从":"p11.jpg","星币·骑士":"p12.jpg","星币·王后":"p13.jpg","星币·国王":"p14.jpg"
+};
+
 const loaderPalettes = [
     { bg1:"#d8d1c9", bg2:"#ece5de", text:"#6b615a", accent:"#b39b8d", halo:"rgba(179,155,141,.24)", halo2:"rgba(156,165,153,.18)" },
     { bg1:"#d7dcd5", bg2:"#edf1eb", text:"#617063", accent:"#9fac9a", halo:"rgba(159,172,154,.24)", halo2:"rgba(181,167,151,.18)" },
@@ -1393,7 +1419,7 @@ function pickDifferentIndex(length, storageKey){
     return idx;
 }
 function getTarotImage(name){
-    return localStorage.getItem(`tarot_img_${name}`) || `https://picsum.photos/seed/${encodeURIComponent(name)}/100/160`;
+    return localStorage.getItem(`tarot_img_${name}`) || (TAROT_IMAGES[name] ? TAROT_IMG_BASE + TAROT_IMAGES[name] : "");
 }
 function formatShortDateTime(str){
     const d = new Date(str || Date.now());
